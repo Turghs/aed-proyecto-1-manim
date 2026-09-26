@@ -1,4 +1,13 @@
+"""BST sin balanceo automático, independiente de Manim.
+
+Los valores deben admitir un orden total coherente con <, > e igualdad.
+Cada valor aparece una sola vez. Los recorridos usan recursión; un árbol
+muy profundo puede alcanzar el límite de recursión de Python.
+"""
+
+
 class Nodo:
+    """Valor y enlaces a sus hijos; None representa un hijo ausente."""
 
     def __init__(self, valor):
         self.valor = valor
@@ -7,12 +16,21 @@ class Nodo:
 
 
 class BST:
+    """Árbol con valores menores a la izquierda y mayores a la derecha.
+
+La propiedad se aplica a todos los descendientes de cada nodo.
+Insertar, buscar y eliminar cuestan O(h + 1), siendo h la altura en aristas.
+"""
 
     def __init__(self):
         self.raiz = None
 
     def buscar(self, valor, camino=None):
-        """Devuelve el nodo o None y, opcionalmente, registra los nodos visitados."""
+        """Devuelve el nodo encontrado o None si el valor no existe.
+
+Si se proporciona una lista camino, agrega los nodos inspeccionados en
+orden desde la raíz, incluido el encontrado. No vacía la lista recibida.
+"""
         actual = self.raiz
         while actual is not None:
             if camino is not None:
@@ -26,6 +44,11 @@ class BST:
         return None
 
     def insertar(self, valor):
+        """Inserta un valor y devuelve su nodo.
+
+Si ya existe, devuelve el nodo existente sin modificar el árbol.
+El orden de inserción determina la forma: no se realizan rotaciones.
+"""
         nuevo_nodo = Nodo(valor)
 
         if self.raiz is None:
@@ -65,17 +88,17 @@ class BST:
         yield from visitar(self.raiz)
 
     def preorder(self):
-        """Nodo -> Izquierda -> Derecha."""
+        """Devuelve una lista de valores en orden Nodo -> Izquierda -> Derecha."""
         return [n.valor for n, momento in self.momentos_recorrido()
                 if momento == "preorder"]
 
     def inorder(self):
-        """Izquierda -> Nodo -> Derecha."""
+        """Devuelve los valores ascendentes: Izquierda -> Nodo -> Derecha."""
         return [n.valor for n, momento in self.momentos_recorrido()
                 if momento == "inorder"]
 
     def postorder(self):
-        """Izquierda -> Derecha -> Nodo."""
+        """Devuelve una lista de valores en orden Izquierda -> Derecha -> Nodo."""
         return [n.valor for n, momento in self.momentos_recorrido()
                 if momento == "postorder"]
 
@@ -84,6 +107,8 @@ class BST:
 
         Con dos hijos, copia el menor valor del subarbol derecho y retira
         ese sucesor, enlazando su posible hijo derecho con su padre.
+        El nodo encontrado conserva su identidad, pero cambia de valor.
+        Si el valor no existe, el árbol permanece sin cambios.
         """
         padre = None
         actual = self.raiz

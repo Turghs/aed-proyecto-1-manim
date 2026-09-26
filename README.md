@@ -23,6 +23,42 @@ Animación educativa creada con Manim que muestra cómo funciona un BST y cómo 
 - Eliminación de nodos con cero, uno o dos hijos mediante sucesor inorder.
 - Efecto de la altura sobre la eficiencia: BST relativamente balanceado frente a degenerado. Un BST común no garantiza búsqueda en `O(log n)`.
 
+## Implementación del BST
+
+Cada nodo tiene como máximo dos hijos. Todos los valores del subárbol izquierdo son menores que el del nodo y todos los del derecho son mayores. Esta propiedad se cumple en cada nodo, no solo en la raíz.
+
+La implementación en `codigo/bst.py` es independiente de Manim y no realiza balanceo automático. El orden de inserción determina la forma del árbol.
+
+- `insertar(valor)` devuelve el nodo insertado. Si el valor ya existe, devuelve el nodo existente sin agregar duplicados.
+- `buscar(valor, camino=None)` devuelve el nodo encontrado o `None`. Si se proporciona una lista `camino`, agrega los nodos visitados sin borrar su contenido anterior.
+- `eliminar(valor)` devuelve `True` si elimina el valor y `False` si no existe. En el caso de dos hijos, copia el valor del sucesor inorder y retira ese sucesor; el nodo reemplazado conserva su identidad, pero cambia de valor.
+- `preorder()`, `inorder()` y `postorder()` devuelven listas de valores. En un árbol vacío devuelven `[]`; inorder devuelve los valores en orden ascendente.
+
+Los valores almacenados deben ser comparables entre sí y tener un orden total coherente. Los ejemplos usan enteros.
+
+### Complejidad
+
+Sea `n` la cantidad de nodos y `h` la altura medida en aristas: una raíz sin hijos tiene altura 0. Se escribe `O(h + 1)` para incluir ese caso; habitualmente se abrevia como `O(h)` al analizar árboles de altura creciente.
+
+| Operación | Tiempo en función de la altura | Con altura logarítmica | Peor caso: árbol degenerado |
+| --- | --- | --- | --- |
+| Insertar, buscar o eliminar | `O(h + 1)` | `O(log n)` | `O(n)` |
+| Recorrer todos los nodos | `O(n)` | `O(n)` | `O(n)` |
+
+El árbol ocupa `O(n)` espacio. La inserción y eliminación iterativas usan `O(1)` espacio auxiliar; la búsqueda también, salvo que se guarde el camino, que ocupa `O(h + 1)`. Los recorridos usan una pila recursiva de `O(h + 1)` y sus listas de resultados ocupan `O(n)`. En árboles muy profundos, los recorridos pueden alcanzar el límite de recursión de Python.
+
+## Pruebas de la estructura de datos
+
+Desde la raíz del proyecto, ejecuta:
+
+```powershell
+python -B -m unittest discover -s tests -v
+```
+
+Las pruebas usan `unittest`, incluido en Python: no requieren instalar Manim ni generar un video. Si prefieres usar el entorno virtual del proyecto, sustituye `python` por `.\.venv\Scripts\python.exe`.
+
+Se comprueban el árbol vacío, los duplicados, los recorridos, los caminos de búsqueda, las búsquedas fallidas y la eliminación de hojas, raíces y nodos con uno o dos hijos. Se incluyen sucesores con hijo derecho, árboles degenerados y 4 000 operaciones mezcladas con semilla fija, contrastadas con un conjunto de Python. También se verifican los enlaces y la propiedad de orden de todos los subárboles. Estas pruebas validan la lógica del BST; no verifican la presentación de las animaciones.
+
 ## Software requerido
 
 - Git para clonar el repositorio.
@@ -100,6 +136,7 @@ Con la configuración predeterminada, `<calidad>` es `480p15` para `-ql` y `1080
 | --- | --- |
 | `main.py` | Define `ProyectoCompleto` y coordina introducción, explicación, contenido técnico y cierre. |
 | `codigo/bst.py` | Implementa `Nodo`, `BST`, inserción, búsqueda, recorridos y eliminación sin depender de Manim. |
+| `tests/test_bst.py` | Pruebas automatizadas del BST, ejecutables sin Manim mediante `unittest`. |
 | `codigo/intro.py` | Presenta el tema con un pequeño árbol animado. |
 | `codigo/explicacion.py` | Explica la propiedad de orden de los subárboles. |
 | `codigo/algoritmo.py` | Anima inserción y búsqueda, aporta funciones visuales y enlaza las secciones técnicas. |
